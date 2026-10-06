@@ -1,111 +1,453 @@
-/* ====== EDIT HERE ====== */
-const PASS="2828";
-// Letter text (edit here)
-const LETTER=["Dear 오빠,","Happy Birthday! 🎉 Today is the day the world got one of its best people, and I got the best brother. Thank you for every laugh, every bit of support, and for always being there when I needed you.","You make everything better just by being you. I'm so proud of you, and I'm so lucky to have you in my life.","I wish you endless happiness, success, and everything your heart dreams of. Here's to many more years together! 🎂"];
-// Videos in the order they play (files must be in the same folder)
-const VIDEOS=["video1.mp4","video2.mp4","video3.mp4","video4.mp4"];
-// 1 = Happyyyie birthdayyy, 2 = Wda pai bilo mera best bro, 3 = Aaj mere bhai ki salgira hai, 4 = Har koi mera bhai nahi
-const SIGN="Always yours 💜";
-/* ======================= */
-const $=s=>document.querySelector(s),pgs=[...document.querySelectorAll('.pg')];
-let cur=0;
-/* balloons: outline only */
-const cols=['#f06bb6','#a855c8','#7c5cdb','#ff8fc7','#c084fc'];
-for(let i=0;i<16;i++){const s=14+Math.random()*16,c=cols[i%5],d=document.createElement('div');d.className='bl';
- d.style.cssText=`left:${Math.random()*100}%;--dx:${(Math.random()*60-30)}px;animation-duration:${14+Math.random()*14}s;animation-delay:${-Math.random()*26}s`;
- d.innerHTML=`<svg width="${s*1.6}" height="${s*2.6}" viewBox="0 0 32 52" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round"><path d="M16 2C8 2 3 9 3 17c0 9 8 17 13 19 5-2 13-10 13-19C29 9 24 2 16 2z"/><path d="M16 36l-3 4h6z"/><path d="M16 40c-4 4 4 7 0 11"/></svg>`;
- $('#balloons').appendChild(d)}
-/* dots */
-const dots=$('#dots');for(let i=3;i<pgs.length;i++)dots.innerHTML+='<i></i>';
-function go(n){pgs[cur].classList.remove('on');cur=n;pgs[n].classList.add('on');
- dots.style.display=n>=2?'flex':'none';[...dots.children].forEach((d,i)=>d.className=i+3===n?'a':'');
- if(n===1)load();if(n===2)hello();if(n===3)boom(30);if(n===8)setTimeout(initScratch,150)}
-/* lock */
-let pin="";const pad=$('#pad');
-['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(k=>{const b=document.createElement('button');b.textContent=k;if(k==='✓'){b.textContent='💜';b.style.fontSize='22px';b.disabled=true;}b.onclick=()=>key(k);pad.appendChild(b)});
-function key(k){if(k==='⌫')pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;
- [...$('#pin').children].forEach((d,i)=>d.className=i<pin.length?'f':'');
- if(pin.length===4){if(pin===PASS){$('#msgL').textContent='';setTimeout(()=>go(1),300)}
-  else{$('#msgL').textContent='Wrong code, try again 🙈';$('#pin').classList.add('shake');setTimeout(()=>{pin='';$('#pin').classList.remove('shake');[...$('#pin').children].forEach(d=>d.className='')},450)}}}
-document.addEventListener('keydown',e=>{if(cur!==0)return;if(/^[0-9]$/.test(e.key))key(e.key);else if(e.key==='Backspace')key('⌫')});
-$('#kb').oninput=e=>{const v=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value='';[...v].forEach(c=>key(c))};
-/* loader */
-function load(){let p=0;const t=setInterval(()=>{p+=Math.random()*9+3;if(p>=100){p=100;clearInterval(t);setTimeout(()=>go(2),500)}$('#lb').style.width=p+'%';$('#lp').textContent=Math.floor(p)+'%'},120)}
-/* hello */
-function hello(){const h=$('#hb');h.innerHTML='';"Happy Birthday".split('').forEach((c,i)=>{h.innerHTML+=`<span style="animation-delay:${i*.06}s">${c===' '?'&nbsp;':c}</span>`});h.innerHTML+='<br>';
- "오빠!".split('').forEach((c,i)=>{h.innerHTML+=`<span style="animation-delay:${1+i*.2}s;color:#a855c8">${c}</span>`});boom(40)}
-/* letter */
-$('#env').onclick=function(){if(this.classList.contains('open'))return;this.classList.add('open');$('#lt').textContent='';
- setTimeout(()=>{this.style.display='none';const L=$('#letter');L.style.display='block';let n=0,h='';
-  LETTER.forEach(p=>{h+='<p style="margin-bottom:10px">'+p.split(' ').map(w=>`<span class="w" style="animation-delay:${(n++)*.09}s">${w}</span>`).join('')+'</p>'});
-  h+=`<span class="sg w" style="animation-delay:${n*.09}s">${SIGN}</span>`;L.innerHTML=h;
-  setTimeout(()=>{$('#n3').style.display='inline-block'},n*90+600)},800)};
-/* wish + microphone blow */
-function blow(){const c=$('#ck');if(c.classList.contains('out'))return;c.classList.add('out');$('#ws').textContent='Your wish is on its way 💫';boom(70);
- $('#micBlow').style.display='none';$('#micStatus').textContent='Candles blown! 🎂💜';stopMic();setTimeout(()=>$('#n4').style.display='inline-block',900)}
-$('#ck').onclick=blow;
-let actx,mstream,micOn=false;
-function stopMic(){micOn=false;try{mstream&&mstream.getTracks().forEach(t=>t.stop());actx&&actx.close()}catch(e){}}
-async function startMic(){
- if(micOn)return;
- if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$('#micStatus').textContent='Mic not supported here. Tap the cake instead 🎂';return}
- try{
-  mstream=await navigator.mediaDevices.getUserMedia({audio:true});
-  actx=new (window.AudioContext||window.webkitAudioContext)();
-  const an=actx.createAnalyser();an.fftSize=512;actx.createMediaStreamSource(mstream).connect(an);
-  micOn=true;$('#micStatus').textContent='Mic on, now blow toward your phone 💨';
-  const d=new Uint8Array(an.fftSize);
-  (function loop(){if(!micOn)return;an.getByteTimeDomainData(d);let sum=0;for(let i=0;i<d.length;i++){const v=(d[i]-128)/128;sum+=v*v}
-   if(Math.sqrt(sum/d.length)>0.12){blow();return}requestAnimationFrame(loop)})();
- }catch(e){$('#micStatus').textContent='Please allow mic access, or tap the cake 🎂'}}
-$('#micBlow').onclick=startMic;
-/* cut */
-(()=>{const b=$('#cutbox'),ln=$('#ln');let sx,sy,on=false,done=false;
- const pt=e=>{const r=b.getBoundingClientRect();return[(e.clientX-r.left)/r.width*250,(e.clientY-r.top)/r.height*160]};
- b.onpointerdown=e=>{if(done)return;on=true;[sx,sy]=pt(e);b.setPointerCapture(e.pointerId);ln.setAttribute('x1',sx);ln.setAttribute('y1',sy)};
- b.onpointermove=e=>{if(!on)return;const[x,y]=pt(e);ln.setAttribute('x2',x);ln.setAttribute('y2',y);
-  if(Math.hypot(x-sx,y-sy)>70&&Math.abs(y-sy)>50){on=false;done=true;b.classList.add('cut');ln.setAttribute('x2',sx);ln.setAttribute('y2',sy);boom(90);$('#cs').textContent='Yay! Enjoy the sweetness 🍓';setTimeout(()=>$('#n5').style.display='inline-block',900)}};
- b.onpointerup=()=>{on=false;if(!done)ln.setAttribute('x2',sx)}})();
-/* videos */
-let vi=0;const vb=$('#vids');
-VIDEOS.forEach((v,i)=>{vb.innerHTML+=`<div class="vid" style="${i?'display:none':''}"><video src="${v}" controls playsinline preload="metadata"></video></div>`});
-vb.innerHTML+='<div style="display:flex;justify-content:center;gap:12px"><button class="btn" style="margin:6px;padding:8px 18px" onclick="sv(-1)">‹</button><button class="btn" style="margin:6px;padding:8px 18px" onclick="sv(1)">›</button></div>';
-function sv(d){const a=[...vb.querySelectorAll('.vid')];const o=a[vi].querySelector('video');o&&o.pause();a[vi].style.display='none';vi=(vi+d+a.length)%a.length;a[vi].style.display='grid'}
-/* double tap = full screen */
-function fs(v){const f=v.requestFullscreen||v.webkitRequestFullscreen;if(f)f.call(v);else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen()}
-let lastTap=0;
-vb.addEventListener('touchend',e=>{const v=e.target.closest('video');if(!v)return;const t=Date.now();if(t-lastTap<350){e.preventDefault();fs(v);lastTap=0}else lastTap=t});
-vb.addEventListener('dblclick',e=>{const v=e.target.closest('video');if(v)fs(v)});
-/* pop balloons */
-const WORDS=["You","are","very","handsome bro!"],PC=['#f7a8d8','#c084fc','#ff8fc7','#a78bfa'];let pn=0;
-WORDS.forEach((w,i)=>{const d=document.createElement('div');d.className='pb';
- d.innerHTML=`<svg viewBox="0 0 80 110"><path d="M40 4C20 4 6 20 6 40c0 22 20 40 34 46 14-6 34-24 34-46C74 20 60 4 40 4z" fill="${PC[i]}" stroke="#8e44ad" stroke-width="3"/><ellipse cx="26" cy="28" rx="7" ry="11" fill="#fff" opacity=".55" transform="rotate(25 26 28)"/><path d="M40 86l-5 7h10z" fill="#8e44ad"/><path d="M40 93c-7 7 7 10 0 16" fill="none" stroke="#8e44ad" stroke-width="2.5"/></svg>`;
- d.onclick=()=>{if(d.classList.contains('gone'))return;d.classList.add('gone');
-  for(let k=0;k<12;k++){const p=document.createElement('i');p.className='sp';const a=k/12*6.28,r=40+Math.random()*30;
-   p.style.cssText=`left:48px;top:48px;background:${PC[i]};--x:${Math.cos(a)*r}px;--y:${Math.sin(a)*r}px`;d.appendChild(p)}
-  const b=document.createElement('b');b.textContent=WORDS[pn++];$('#said').innerHTML=pn===1?'':$('#said').innerHTML;$('#said').appendChild(b);$('#ph').style.display='none';
-  boom(pn===4?100:10);if(pn===4)setTimeout(()=>$('#n8').style.display='inline-block',700)};
- $('#pops').appendChild(d)});
-$('#seal').onclick=()=>{boom(160);$('#seal').textContent='Sealed with love 💜'};
-/* confetti */
-function boom(n){for(let i=0;i<n;i++){const c=document.createElement('i');c.className='cf';
- c.style.cssText=`left:${Math.random()*100}vw;background:${['#f06bb6','#a855c8','#ffc94d','#ff8fc7','#7c5cdb'][i%5]};animation-delay:${Math.random()*.8}s;animation-duration:${2+Math.random()*2}s;border-radius:${i%2?'50%':'2px'}`;
- document.body.appendChild(c);setTimeout(()=>c.remove(),4800)}}
+const $ = (s) => document.querySelector(s);
 
-/* scratch photo */
-function initScratch(){
- const c=$('#scratchCanvas'),w=$('#scratchWrap'),img=w.querySelector('img');
- if(!img.complete||!img.naturalWidth){img.onload=initScratch;return}
- const r={width:w.offsetWidth,height:w.offsetHeight};if(!r.width)return;
- const dpr=window.devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;c.style.width=r.width+'px';c.style.height=r.height+'px';
- const x=c.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.globalCompositeOperation='source-over';
- const g=x.createLinearGradient(0,0,r.width,r.height);g.addColorStop(0,'#d9b3ec');g.addColorStop(1,'#a855c8');x.fillStyle=g;x.fillRect(0,0,r.width,r.height);
- x.fillStyle='rgba(255,255,255,.75)';x.font='bold 20px Nunito, sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText('Scratch me ✨',r.width/2,r.height/2);
- x.globalCompositeOperation='destination-out';
- let down=false,n=0,done=false;
- const cleared=()=>{let hit=0,tot=0;for(let i=1;i<10;i++)for(let j=1;j<14;j++){tot++;if(x.getImageData(i/10*r.width*dpr,j/14*r.height*dpr,1,1).data[3]<40)hit++}return hit/tot};
- function sc(e){if(!down||done)return;const b=c.getBoundingClientRect();x.beginPath();x.arc((e.clientX-b.left)*r.width/b.width,(e.clientY-b.top)*r.height/b.height,26,0,6.3);x.fill();
-  if(++n%10===0&&cleared()>0.5){done=true;c.style.transition='opacity .6s';c.style.opacity=0;c.style.pointerEvents='none';$('#scratchText').textContent='Surprise revealed! 💜';boom(80);$('#nPhoto').style.display='inline-block'}}
- c.onpointerdown=e=>{down=true;c.setPointerCapture(e.pointerId);sc(e)};c.onpointermove=sc;c.onpointerup=c.onpointercancel=()=>{down=false}}
-/* replay */
-function replay(){location.reload()}
+let current = 0;
+
+function go(n) {
+  document.querySelectorAll('.pg').forEach((p, i) => {
+    p.classList.toggle('on', i === n);
+  });
+
+  current = n;
+
+  if (n === 3) setTimeout(showLetter, 50);
+  if (n === 8 && window.initScratch) setTimeout(() => window.initScratch(), 100);
+}
+
+/* =========================
+LETTER
+========================= */
+
+function showLetter() {
+  const letter = $("#letter");
+  if (!letter) return;
+
+  letter.innerHTML = `
+    Dear 오빠,
+    <p>Happy Birthday! 🎉 You are the best brother a person could ask for.</p>
+    <p>I’m so grateful to have you in my life. I want you by my side for the rest of my life, my brother. ❤️</p>
+    <p>I wish you all the happiness in the world, and I hope this year brings you everything you’ve been hoping for.</p>
+    <p>I want you to become the best cricketer in the world. ❤️ You are my best friend and my brother, and I love you so much.</p>
+    <p>I hope you have an amazing birthday filled with love, laughter, and all your favorite things.</p>
+    <p>I’ve never opened up to anyone the way I do with you—not even with Alishba or Mubashra.</p>
+    <p>I don’t know how I became so attached to you, but somehow, I have. And now, you mean so much to me.</p>
+    <p>I just hope you’ll always keep my trust safe and never break it. ❤️</p>
+    <p>Happy Birthday once again, 오빠! 🎂❤️</p>
+  `;
+}
+
+/* =========================
+LOCK / PIN
+========================= */
+
+const pin = "2828";
+let entered = "";
+
+function updateDots() {
+  const dots = document.querySelectorAll("#dots span");
+  dots.forEach((dot, i) => dot.classList.toggle("filled", i < entered.length));
+}
+
+function pressKey(num) {
+  if (entered.length >= 4) return;
+
+  entered += num;
+  updateDots();
+
+  if (entered.length === 4) {
+    setTimeout(() => {
+      if (entered === pin) {
+        go(1);
+      } else {
+        entered = "";
+        updateDots();
+        if ($("#lockMsg")) $("#lockMsg").textContent = "Wrong PIN 💜";
+      }
+    }, 250);
+  }
+}
+
+document.querySelectorAll("#kb button").forEach(btn => {
+  btn.onclick = () => pressKey(btn.dataset.n);
+});
+
+/* =========================
+LOADER
+========================= */
+
+let progress = 0;
+
+const loader = setInterval(() => {
+  progress += 2;
+
+  if ($("#lp")) $("#lp").textContent = progress + "%";
+  if ($("#lb")) $("#lb").style.width = progress + "%";
+
+  if (progress >= 100) {
+    clearInterval(loader);
+    setTimeout(() => { go(2); }, 500);
+  }
+}, 35);
+
+/* =========================
+LETTER OPEN
+========================= */
+
+if ($("#openLetter")) {
+  $("#openLetter").onclick = () => go(3);
+}
+
+/* =========================
+WISH / CANDLES
+========================= */
+
+function blow() {
+  const c = $("#ck");
+  if (!c || c.classList.contains("out")) return;
+
+  c.classList.add("out");
+
+  if ($("#ws")) $("#ws").textContent = "Your wish is on its way 💫";
+  if (typeof boom === "function") boom(70);
+
+  if ($("#micBlow")) $("#micBlow").style.display = "none";
+  if ($("#micStatus")) $("#micStatus").textContent = "Candles blown! 🎂💜";
+
+  setTimeout(() => {
+    if ($("#n4")) $("#n4").style.display = "inline-block";
+  }, 900);
+}
+
+/* =========================
+MICROPHONE
+========================= */
+
+let audioContext;
+let analyser;
+let microphone;
+let micRunning = false;
+
+async function startMic() {
+  if (micRunning) return;
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if ($("#micStatus")) $("#micStatus").textContent =
+      "Microphone is not supported in this browser.";
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 512;
+    microphone = audioContext.createMediaStreamSource(stream);
+    microphone.connect(analyser);
+    micRunning = true;
+
+    if ($("#micStatus")) $("#micStatus").textContent =
+      "Mic on — now blow toward your microphone 💨";
+
+    detectBlow();
+  } catch (err) {
+    if ($("#micStatus")) $("#micStatus").textContent =
+      "Please allow microphone access to use this feature.";
+  }
+}
+
+function detectBlow() {
+  if (!micRunning) return;
+
+  const data = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(data);
+
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) {
+    const value = (data[i] - 128) / 128;
+    sum += value * value;
+  }
+
+  const volume = Math.sqrt(sum / data.length);
+
+  if (volume > 0.12) {
+    blow();
+    micRunning = false;
+    if (microphone) microphone.disconnect();
+    if (audioContext) audioContext.close();
+    return;
+  }
+
+  requestAnimationFrame(detectBlow);
+}
+
+if ($("#micBlow")) $("#micBlow").onclick = startMic;
+
+/* =========================
+CAKE CUT
+========================= */
+
+let cutting = false;
+
+if ($("#cutbox")) $("#cutbox").addEventListener("pointerdown", startCut);
+
+function startCut(e) {
+  if (cutting) return;
+  cutting = true;
+
+  const box = $("#cutbox");
+  const rect = box.getBoundingClientRect();
+  const sx = e.clientX - rect.left;
+  const sy = e.clientY - rect.top;
+  const line = $("#ln");
+
+  if (line) {
+    line.setAttribute("x1", sx);
+    line.setAttribute("y1", sy);
+    line.setAttribute("x2", sx);
+    line.setAttribute("y2", sy);
+  }
+
+  function move(ev) {
+    const x = ev.clientX - rect.left;
+    const y = ev.clientY - rect.top;
+    if (line) {
+      line.setAttribute("x2", x);
+      line.setAttribute("y2", y);
+    }
+  }
+
+  function endCut() {
+    document.removeEventListener("pointermove", move);
+    document.removeEventListener("pointerup", endCut);
+
+    if (line) {
+      line.setAttribute("x2", sx);
+      line.setAttribute("y2", sy);
+    }
+
+    cutting = false;
+    if ($("#cutMsg")) $("#cutMsg").textContent = "Cake cut! 🎂💜";
+    if ($("#n5")) $("#n5").style.display = "inline-block";
+    if (typeof boom === "function") boom(45);
+  }
+
+  document.addEventListener("pointermove", move);
+  document.addEventListener("pointerup", endCut);
+}
+
+/* =========================
+BALLOONS
+========================= */
+
+function createPopBalloon() {
+  const pops = $("#pops");
+  if (!pops) return;
+
+  const balloon = document.createElement("div");
+  balloon.className = "pop-balloon";
+
+  balloon.style.left = Math.random() * 80 + 10 + "%";
+  balloon.style.top = Math.random() * 65 + 10 + "%";
+
+  balloon.onclick = () => {
+    balloon.classList.add("popped");
+
+    if (typeof boom === "function") boom(20);
+
+    setTimeout(() => {
+      balloon.remove();
+
+      if (!document.querySelector(".pop-balloon")) {
+        if ($("#said")) $("#said").textContent = "You popped them all! 🎈💜";
+        if ($("#n8")) $("#n8").style.display = "inline-block";
+      }
+    }, 250);
+  };
+
+  pops.appendChild(balloon);
+}
+
+function setupPops() {
+  const pops = $("#pops");
+  if (!pops) return;
+
+  pops.innerHTML = "";
+  for (let i = 0; i < 12; i++) createPopBalloon();
+}
+
+/* =========================
+SCRATCH PHOTO
+========================= */
+
+window.initScratch = function () {
+  const canvas = $("#scratchCanvas");
+  const wrap = $("#scratchWrap");
+  if (!canvas || !wrap) return;
+
+  const rect = wrap.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
+
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + "px";
+  canvas.style.height = rect.height + "px";
+
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillStyle = "#b993c8";
+  ctx.fillRect(0, 0, rect.width, rect.height);
+
+  ctx.fillStyle = "rgba(255,255,255,.35)";
+  ctx.font = "bold 18px Nunito";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Scratch me ✨", rect.width / 2, rect.height / 2);
+
+  ctx.globalCompositeOperation = "destination-out";
+
+  let scratching = false;
+  let scratched = 0;
+
+  function scratch(e) {
+    if (!scratching) return;
+
+    const r = canvas.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 24, 0, Math.PI * 2);
+    ctx.fill();
+
+    scratched++;
+
+    if (scratched > 80) {
+      canvas.style.pointerEvents = "none";
+      if ($("#scratchText")) $("#scratchText").textContent = "Surprise revealed! 💜";
+      if ($("#nPhoto")) $("#nPhoto").style.display = "inline-block";
+    }
+  }
+
+  canvas.onpointerdown = e => {
+    scratching = true;
+    scratch(e);
+  };
+  canvas.onpointermove = scratch;
+  canvas.onpointerup = () => scratching = false;
+  canvas.onpointercancel = () => scratching = false;
+};
+
+/* =========================
+NAVIGATION
+========================= */
+
+if ($("#n2")) $("#n2").onclick = () => go(3);
+if ($("#n3")) $("#n3").onclick = () => go(4);
+if ($("#n4")) $("#n4").onclick = () => go(5);
+if ($("#n5")) $("#n5").onclick = () => go(6);
+
+if ($("#n7")) {
+  $("#n7").onclick = () => {
+    setupPops();
+    go(7);
+  };
+}
+
+if ($("#n8")) $("#n8").onclick = () => go(8);
+if ($("#nPhoto")) $("#nPhoto").onclick = () => go(9);
+
+/* =========================
+REPLAY
+========================= */
+
+if ($("#replay")) $("#replay").onclick = () => location.reload();
+
+/* =========================
+CONFETTI
+========================= */
+
+function boom(count = 50) {
+  const fx = $("#fx");
+  if (!fx) return;
+
+  const ctx = fx.getContext("2d");
+  fx.width = window.innerWidth;
+  fx.height = window.innerHeight;
+
+  const pieces = [];
+
+  for (let i = 0; i < count; i++) {
+    pieces.push({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 0.5) * 12 - 3,
+      size: Math.random() * 5 + 2,
+      life: 100
+    });
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, fx.width, fx.height);
+    let alive = false;
+
+    pieces.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.15;
+      p.life--;
+
+      ctx.globalAlpha = p.life / 100;
+      ctx.fillStyle = `hsl(${Math.random() * 360},80%,70%)`;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+
+    ctx.globalAlpha = 1;
+
+    if (alive) requestAnimationFrame(animate);
+    else ctx.clearRect(0, 0, fx.width, fx.height);
+  }
+
+  animate();
+}
+
+/* =========================
+FLOATING BALLOONS
+========================= */
+
+function floatingBalloons() {
+  const container = $("#balloons");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const colors = [
+    "#f06bb6",
+    "#a855c8",
+    "#7c5cdb",
+    "#ff8fc7",
+    "#c084fc"
+  ];
+
+  for (let i = 0; i < 16; i++) {
+    const b = document.createElement("div");
+    b.className = "bl";
+    b.style.left = Math.random() * 100 + "%";
+    b.style.animationDelay = Math.random() * 5 + "s";
+    b.style.borderColor = colors[i % colors.length];
+    container.appendChild(b);
+  }
+}
+
+floatingBalloons();
+
+/* =========================
+START
+========================= */
+
+go(0);
