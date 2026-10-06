@@ -6,33 +6,128 @@
 <link rel="stylesheet" href="style.css"></head><body>
 <div id="balloons"></div>
 <canvas id="fx"></canvas>
+
 <!-- 0 LOCK -->
 <section class="pg on" id="p0">
  <div id="lock" class="card" style="display:flex;flex-direction:column;align-items:center;padding:20px 18px 22px;width:min(100%,330px);background:rgba(255,255,255,.55)">
-  <div class="ic">🔒</div><h2>Just for 오빠</h2><p class="sub">Enter the secret code to open your surprise</p>
+  <div class="ic">🔒</div>
+  <h2>Just for 오빠</h2>
+  <p class="sub">Enter the secret code to open your surprise</p>
   <input id="kb" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
   <div class="pin" id="pin" onclick="document.getElementById('kb').focus()"><i></i><i></i><i></i><i></i></div>
-  <div class="pad" id="pad"></div><div id="msgL"></div>
+  <div class="pad" id="pad"></div>
+  <div id="msgL"></div>
  </div>
 </section>
+
 <!-- 1 LOADER -->
-<section class="pg" id="p1"><div style="font-size:60px">🎂</div><h2 style="margin-top:8px">Something Special</h2><p class="sub" style="margin:4px 0">is being prepared for you…</p><div class="bar"><b id="lb"></b></div><small id="lp">0%</small></section>
+<section class="pg" id="p1">
+ <div style="font-size:60px">🎂</div>
+ <h2 style="margin-top:8px">Something Special</h2>
+ <p class="sub" style="margin:4px 0">is being prepared for you…</p>
+ <div class="bar"><b id="lb"></b></div><small id="lp">0%</small>
+</section>
+
 <!-- 2 HELLO -->
-<section class="pg" id="p2"><p class="title">Today is all yours ✨</p><h1 class="big" id="hb" style="margin:10px 0"></h1><div class="card" style="margin-top:14px"><p class="sub" style="margin:0 auto">This little website was made with love, just for you. Come, let me show you what's inside.</p></div><button class="btn" onclick="go(3)">Open your gift 🎁</button></section>
+<section class="pg" id="p2">
+ <p class="title">Today is all yours ✨</p>
+ <h1 class="big" id="hb" style="margin:10px 0"></h1>
+ <div class="card" style="margin-top:14px"><p class="sub" style="margin:0 auto">This little website was made with love, just for you. Come, let me show you what's inside.</p></div>
+ <button class="btn" onclick="go(3)">Open your gift 🎁</button>
+</section>
+
 <!-- 3 LETTER -->
-<section class="pg" id="p3"><p class="title" id="lt">Tap the envelope 💌</p><div class="env" id="env"><div class="fl"></div><div class="h">💜</div></div><div class="card" id="letter"></div><button class="btn" id="n3" style="display:none" onclick="go(4)">Keep going ✨</button></section>
+<section class="pg" id="p3">
+ <p class="title" id="lt">Tap the envelope 💌</p>
+ <div class="env" id="env"><div class="fl"></div><div class="h">💜</div></div>
+ <div class="card" id="letter"></div>
+ <button class="btn" id="n3" style="display:none" onclick="go(4)">Keep going ✨</button>
+</section>
+
 <!-- 4 WISH -->
 <section class="pg" id="p4">
- <h2>Make a wish 🌟</h2><p class="sub" id="ws">Close your eyes, wish for something special, then blow the candles.</p>
- <svg class="cake" id="ck" viewBox="0 0 250 220"><ellipse cx="125" cy="205" rx="105" ry="12" fill="#e9c4f2" opacity=".6"/><rect x="35" y="130" width="180" height="70" rx="14" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/><path d="M35 150q15 22 30 0t30 0 30 0 30 0 30 0 30 0v-14a14 14 0 0 0-14-6H49a14 14 0 0 0-14 6z" fill="#fff" stroke="#a855c8" stroke-width="3"/><rect x="62" y="82" width="126" height="52" rx="12" fill="#fde0f0" stroke="#a855c8" stroke-width="3"/><path d="M62 100q13 18 21 0t21 0 21 0 21 0 21 0v-8a12 12 0 0 0-12-10H74a12 12 0 0 0-12 10z" fill="#fff" stroke="#a855c8" stroke-width="3"/><g stroke="#a855c8" stroke-width="3" stroke-linecap="round"><path d="M95 82V52M125 82V44M155 82V52"/></g><g class="fire"><path d="M95 48c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g><g class="fire" style="animation-delay:.1s"><path d="M125 40c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g><g class="fire" style="animation-delay:.2s"><path d="M155 48c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g><g class="smoke" fill="none" stroke="#b9a3c9" stroke-width="3" stroke-linecap="round"><path d="M95 40q6-8 0-16M125 32q6-8 0-16M155 40q6-8 0-16"/></g></svg>
+ <h2>Make a wish 🌟</h2>
+ <p class="sub" id="ws">Close your eyes, wish for something special, then blow the candles.</p>
+ <svg class="cake" id="ck" viewBox="0 0 250 220">
+  <ellipse cx="125" cy="205" rx="105" ry="12" fill="#e9c4f2" opacity=".6"/>
+  <rect x="35" y="130" width="180" height="70" rx="14" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/>
+  <path d="M35 150q15 22 30 0t30 0 30 0 30 0 30 0 30 0v-14a14 14 0 0 0-14-6H49a14 14 0 0 0-14 6z" fill="#fff" stroke="#a855c8" stroke-width="3"/>
+  <rect x="62" y="82" width="126" height="52" rx="12" fill="#fde0f0" stroke="#a855c8" stroke-width="3"/>
+  <path d="M62 100q13 18 21 0t21 0 21 0 21 0 21 0v-8a12 12 0 0 0-12-10H74a12 12 0 0 0-12 10z" fill="#fff" stroke="#a855c8" stroke-width="3"/>
+  <g stroke="#a855c8" stroke-width="3" stroke-linecap="round"><path d="M95 82V52M125 82V44M155 82V52"/></g>
+  <g class="fire"><path d="M95 48c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g>
+  <g class="fire" style="animation-delay:.1s"><path d="M125 40c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g>
+  <g class="fire" style="animation-delay:.2s"><path d="M155 48c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g>
+  <g class="smoke" fill="none" stroke="#b9a3c9" stroke-width="3" stroke-linecap="round"><path d="M95 40q6-8 0-16M125 32q6-8 0-16M155 40q6-8 0-16"/></g>
+ </svg>
+ <button class="btn" id="blow">Blow the candles 🌬️</button>
  <button class="btn" id="micBlow">🎤 Blow with microphone</button>
- <p id="micStatus" class="sub" style="font-size:12px;margin-top:4px"></p>
+<p id="micStatus" class="sub" style="font-size:12px;margin-top:4px"></p>
  <button class="btn" id="n4" style="display:none" onclick="go(5)">Time for cake 🍰</button>
 </section>
+
 <!-- 5 CUT -->
-<section class="pg" id="p5"><h2>Time to cut the cake! 🍰</h2><p class="sub" id="cs">Draw a line down through the cake to cut it.</p><div id="cutbox"><svg viewBox="0 0 250 160" style="width:100%;overflow:visible"><g id="hl" class="half" style="transform-origin:125px 150px"><path d="M125 30H66a22 22 0 0 0-22 22v70a18 18 0 0 0 18 18h63z" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/><path d="M125 30H66a22 22 0 0 0-22 22v16q12 16 20 0t20 0 20 0 21 0z" fill="#fff" stroke="#a855c8" stroke-width="3"/></g><g id="hr" class="half" style="transform-origin:125px 150px"><path d="M125 30h59a22 22 0 0 1 22 22v70a18 18 0 0 1-18 18h-63z" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/><path d="M125 30h59a22 22 0 0 1 22 22v16q-12 16-20 0t-20 0-20 0-21 0z" fill="#fff" stroke="#a855c8" stroke-width="3"/><text x="150" y="108" font-size="30">🍓</text></g></svg><svg id="line" viewBox="0 0 250 160" preserveAspectRatio="none"><line id="ln" stroke="#a855c8" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/></svg></div><button class="btn" id="n5" style="display:none" onclick="go(6)">Next ✨</button></section>
-<!-- VIDEOS --><section class="pg" id="p7"><h2>Some edits only for you! 💝</h2><p class="sub" style="font-size:13px;margin:2px 0 14px">just to make you smile 💓</p><p class="sub" style="font-size:13px;margin:2px 0 14px">double tap for full screen</p><div class="vslide" id="vids"></div><button class="btn" onclick="go(7)">Next ✨</button></section>
-<!-- 8 POP --><section class="pg" id="p8"><h2>Pop the balloons! 🎈</h2><p class="sub" id="ph" style="margin-bottom:4px">Tap each balloon to pop it</p><div id="said">&nbsp;</div><div id="pops"></div><button class="btn" id="n8" style="display:none" onclick="go(8)">Next ✨</button></section>
-<!-- PHOTO --><section class="pg" id="p10"><p class="title">And here's the star ⭐</p><div class="scratch-wrap" id="scratchWrap"><img src="photo.jpg" alt="Birthday card" class="scratch-photo"><canvas id="scratchCanvas"></canvas></div><p class="sub" id="scratchText">Scratch to reveal the surprise ✨</p><button class="btn" id="nPhoto" style="display:none" onclick="go(9)">Next ✨</button></section>
-<!-- 9 FINAL --><section class="pg" id="p9"><div class="heart">💜</div><h2 style="margin-top:10px">Happy Birthday, 오빠!</h2><div class="card" style="margin-top:14px;text-align:left;line-height:1.7"><p>This wasn't about perfection, just honesty.</p><br><p>I wanted you to feel celebrated on your special day. Whatever comes next, I'm so glad you're my brother.</p><span style="display:block;text-align:right;font-family:'Caveat',cursive;font-size:26px;color:var(--vio);margin-top:8px">Made with love 💜</span></div><button class="btn" id="seal">Seal it 💌</button><button class="btn" onclick="replay()" style="margin-top:10px">🔄 Replay</button></section>
-<div class="dots" id="dots" style="display:none"></div><script src="script.js"></script></body></html>
+<section class="pg" id="p5">
+ <h2>Time to cut the cake! 🍰</h2>
+ <p class="sub" id="cs">Draw a line down through the cake to cut it.</p>
+ <div id="cutbox">
+  <svg viewBox="0 0 250 160" style="width:100%;overflow:visible">
+   <g id="hl" class="half" style="transform-origin:125px 150px"><path d="M125 30H66a22 22 0 0 0-22 22v70a18 18 0 0 0 18 18h63z" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/><path d="M125 30H66a22 22 0 0 0-22 22v16q12 16 20 0t20 0 20 0 21 0z" fill="#fff" stroke="#a855c8" stroke-width="3"/></g>
+   <g id="hr" class="half" style="transform-origin:125px 150px"><path d="M125 30h59a22 22 0 0 1 22 22v70a18 18 0 0 1-18 18h-63z" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/><path d="M125 30h59a22 22 0 0 1 22 22v16q-12 16-20 0t-20 0-20 0-21 0z" fill="#fff" stroke="#a855c8" stroke-width="3"/><text x="150" y="108" font-size="30">🍓</text></g>
+  </svg>
+  <svg id="line" viewBox="0 0 250 160" preserveAspectRatio="none"><line id="ln" stroke="#a855c8" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/></svg>
+ </div>
+ <button class="btn" id="n5" style="display:none" onclick="go(6)">Next ✨</button>
+</section>
+
+<!-- VIDEOS -->
+<section class="pg" id="p7">
+ <h2>Some edits only for you! 💝</h2>
+ <p class="sub" style="font-size:13px;margin:2px 0 14px">just to make you smile 💓</p>
+<p class="sub" style="font-size:13px;margin:2px 0 14px">double tap for full screen</p>
+
+ <div class="vslide" id="vids"></div>
+ <button class="btn" onclick="go(7)">Next ✨</button>
+</section>
+
+<!-- 8 POP -->
+<section class="pg" id="p8">
+ <h2>Pop the balloons! 🎈</h2>
+ <p class="sub" id="ph" style="margin-bottom:4px">Tap each balloon to pop it</p>
+ <div id="said">&nbsp;</div>
+ <div id="pops"></div>
+ <button class="btn" id="n8" style="display:none" onclick="go(8)">Next ✨</button>
+</section>
+<!-- PHOTO -->
+<section class="pg" id="p10">
+  <p class="title">And here's the star ⭐</p>
+
+  <div class="scratch-wrap" id="scratchWrap">
+    <img src="photo.jpg" alt="Birthday card" class="scratch-photo">
+    <canvas id="scratchCanvas"></canvas>
+  </div>
+
+  <p class="sub" id="scratchText">Scratch to reveal the surprise ✨</p>
+
+  <button class="btn" id="nPhoto" style="display:none" onclick="go(9)">
+    Next ✨
+  </button>
+</section>
+
+<!-- 9 FINAL -->
+<section class="pg" id="p9">
+ <div class="heart">💜</div>
+ <h2 style="margin-top:10px">Happy Birthday, 오빠!</h2>
+ <div class="card" style="margin-top:14px;text-align:left;line-height:1.7">
+  <p>This wasn't about perfection, just honesty.</p><br>
+  <p>I wanted you to feel celebrated on your special day. Whatever comes next, I'm so glad you're my brother.</p>
+  <span style="display:block;text-align:right;font-family:'Caveat',cursive;font-size:26px;color:var(--vio);margin-top:8px">Made with love 💜</span>
+ </div>
+ <button class="btn" id="seal">Seal it 💌</button>
+ <button class="btn" onclick="replay()" style="margin-top:10px">
+  🔄 Replay
+</button>
+</section>
+
+<div class="dots" id="dots" style="display:none"></div>
+<script src="script.js"></script></body></html>
