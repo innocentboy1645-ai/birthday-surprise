@@ -1,919 +1,288 @@
-/* ====== EDIT HERE ====== */
-const PASS="2828";
+(function () {
+  var PASSWORD = '9677';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Letter text
-const letter = `Dear 오빠,
-
-Happy Birthday! 🎉 You are the best brother a person could ask for.
-
-I'm so grateful to have you in my life. I want you by my side for the rest of my life, my brother. ❤️
-
-I wish you all the happiness in the world, and I hope this year brings you everything you've been hoping for.
-
-I want you to become the best cricketer in the world. ❤️ You are my best friend and my brother, and I love you so much.
-
-I hope you have an amazing birthday filled with love, laughter, and all your favorite things.
-
-I've never opened up to anyone the way I do with you.
-
-I don't know how I became so attached to you, but somehow, I have. And now, you mean so much to me.
-
-I just hope you'll always keep my trust safe and never break it. ❤️
-
-Happy Birthday once again, 오빠! 🎂❤️`;
-
-const SIGN="Your forever little sister 💜";
-/* ======================= */
-
-
-const $=s=>document.querySelector(s);
-const pgs=[...document.querySelectorAll('.pg')];
-let cur=0;
-
-
-/* balloons */
-const cols=['#f06bb6','#a855c8','#7c5cdb','#ff8fc7','#c084fc'];
-
-for(let i=0;i<16;i++){
-
-  const s=14+Math.random()*16;
-  const c=cols[i%5];
-  const d=document.createElement('div');
-
-  d.className='bl';
-
-  d.style.cssText=
-    `left:${Math.random()*100}%;`+
-    `--dx:${(Math.random()*60-30)}px;`+
-    `animation-duration:${14+Math.random()*14}s;`+
-    `animation-delay:${-Math.random()*26}s`;
-
-  d.innerHTML=
-    `<svg width="${s*1.6}" height="${s*2.6}" viewBox="0 0 32 52" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round">
-      <path d="M16 2C8 2 3 9 3 17c0 9 8 17 13 19 5-2 13-10 13-19C29 9 24 2 16 2z"/>
-      <path d="M16 36l-3 4h6z"/>
-      <path d="M16 40c-4 4 4 7 0 11"/>
-    </svg>`;
-
-  $('#balloons').appendChild(d);
-}
-
-
-/* dots */
-const dots=$('#dots');
-
-for(let i=3;i<pgs.length;i++){
-  dots.innerHTML+='<i></i>';
-}
-
-
-/* navigation */
-function go(n){
-
-  pgs[cur].classList.remove('on');
-
-  cur=n;
-
-  pgs[n].classList.add('on');
-
-  dots.style.display=n>=2?'flex':'none';
-
-  [...dots.children].forEach((d,i)=>{
-    d.className=i+3===n?'a':'';
-  });
-
-  if(n===1) load();
-
-  if(n===2) hello();
-
-  if(n===3) boom(30);
-
-  /* IMPORTANT:
-     Photo page is DOM index 8.
-     Scratch is initialized AFTER page becomes visible.
-  */
-  if(n===8){
-
-    setTimeout(()=>{
-
-      if(window.initScratch){
-        window.initScratch();
-      }
-
-    },200);
+  /* ---------- Confetti ---------- */
+  var cv = document.getElementById('confetti');
+  var ctx = cv.getContext('2d');
+  var parts = [];
+  var raf = 0;
+  function sizeCanvas() {
+    var r = window.devicePixelRatio || 1;
+    cv.width = Math.round(window.innerWidth * r);
+    cv.height = Math.round(window.innerHeight * r);
+    ctx.setTransform(r, 0, 0, r, 0, 0);
   }
-}
-
-
-/* lock */
-let pin="";
-const pad=$('#pad');
-
-['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(k=>{
-
-  const b=document.createElement('button');
-
-  b.textContent=k;
-
-  if(k==='✓'){
-    b.textContent='💜';
-    b.style.fontSize='22px';
-    b.disabled=true;
+  window.addEventListener('resize', sizeCanvas);
+  sizeCanvas();
+  function palette() {
+    var s = getComputedStyle(document.documentElement);
+    return ['--gold-fill', '--teal', '--rose', '--gold'].map(function (k) { return s.getPropertyValue(k).trim() || '#e3b04b'; });
   }
-
-  b.onclick=()=>key(k);
-
-  pad.appendChild(b);
-});
-
-
-function key(k){
-
-  if(k==='⌫'){
-    pin=pin.slice(0,-1);
-  }
-  else if(pin.length<4){
-    pin+=k;
-  }
-
-  [...$('#pin').children].forEach((d,i)=>{
-    d.className=i<pin.length?'f':'';
-  });
-
-  if(pin.length===4){
-
-    if(pin===PASS){
-
-      $('#msgL').textContent='';
-
-      setTimeout(()=>go(1),300);
-
-    }
-    else{
-
-      $('#msgL').textContent='Wrong code, try again 🙈';
-
-      $('#pin').classList.add('shake');
-
-      setTimeout(()=>{
-
-        pin='';
-
-        $('#pin').classList.remove('shake');
-
-        [...$('#pin').children].forEach(d=>{
-          d.className='';
-        });
-
-      },450);
-    }
-  }
-}
-
-
-document.addEventListener('keydown',e=>{
-
-  if(cur!==0)return;
-
-  if(/^[0-9]$/.test(e.key)){
-    key(e.key);
-  }
-  else if(e.key==='Backspace'){
-    key('⌫');
-  }
-
-});
-
-
-$('#kb').oninput=e=>{
-
-  const v=e.target.value.replace(/\D/g,'').slice(0,4);
-
-  e.target.value='';
-
-  [...v].forEach(c=>key(c));
-};
-
-
-/* loader */
-function load(){
-
-  let p=0;
-
-  const t=setInterval(()=>{
-
-    p+=Math.random()*9+3;
-
-    if(p>=100){
-
-      p=100;
-
-      clearInterval(t);
-
-      setTimeout(()=>go(2),500);
-    }
-
-    $('#lb').style.width=p+'%';
-
-    $('#lp').textContent=Math.floor(p)+'%';
-
-  },120);
-}
-
-
-/* hello */
-function hello(){
-
-  const h=$('#hb');
-
-  h.innerHTML='';
-
-  "Happy Birthday".split('').forEach((c,i)=>{
-
-    h.innerHTML+=
-      `<span style="animation-delay:${i*.06}s">
-        ${c===' '?'&nbsp;':c}
-      </span>`;
-
-  });
-
-  h.innerHTML+='<br>';
-
-  "오빠!".split('').forEach((c,i)=>{
-
-    h.innerHTML+=
-      `<span style="animation-delay:${1+i*.2}s;color:#a855c8">
-        ${c}
-      </span>`;
-
-  });
-
-  boom(40);
-}
-
-
-/* letter */
-$('#env').onclick=function(){
-
-  if(this.classList.contains('open'))return;
-
-  this.classList.add('open');
-
-  $('#lt').textContent='';
-
-  setTimeout(()=>{
-
-    this.style.display='none';
-
-    const L=$('#letter');
-
-    L.style.display='block';
-
-    let n=0;
-    let h='';
-
-    const paragraphs=letter.trim().split(/\n\s*\n/);
-
-    paragraphs.forEach(p=>{
-
-      h+=
-        '<p style="margin-bottom:10px">'+
-        p.split(/\s+/).map(w=>
-          `<span class="w" style="animation-delay:${(n++)*.09}s">${w}</span>`
-        ).join(' ')+
-        '</p>';
-
-    });
-
-    h+=
-      `<span class="sg w" style="animation-delay:${n*.09}s">
-        ${SIGN}
-      </span>`;
-
-    L.innerHTML=h;
-
-    setTimeout(()=>{
-
-      $('#n3').style.display='inline-block';
-
-    },n*90+600);
-
-  },800);
-};
-
-
-/* wish */
-function blow(){
-
-  const c=$('#ck');
-
-  if(c.classList.contains('out'))return;
-
-  c.classList.add('out');
-
-  $('#ws').textContent='Your wish is on its way 💫';
-
-  boom(70);
-
-  $('#blow').style.display='none';
-
-  $('#micBlow').style.display='none';
-
-  $('#micStatus').textContent='Candles blown! 🎂💜';
-
-  setTimeout(()=>{
-    $('#n4').style.display='inline-block';
-  },900);
-}
-
-
-$('#blow').onclick=blow;
-
-$('#ck').onclick=blow;
-
-
-/* microphone */
-let audioContext;
-let analyser;
-let microphone;
-let micRunning=false;
-
-
-async function startMic(){
-
-  if(micRunning)return;
-
-  if(!navigator.mediaDevices ||
-     !navigator.mediaDevices.getUserMedia){
-
-    $('#micStatus').textContent=
-      'Microphone is not supported in this browser.';
-
-    return;
-  }
-
-  try{
-
-    const stream=
-      await navigator.mediaDevices.getUserMedia({
-        audio:true
+  function burst(x, y, n, spread) {
+    n = reduce ? Math.min(n, 16) : n;
+    spread = spread || 1;
+    var cols = palette();
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2;
+      var sp = (Math.random() * 7 + 3) * spread;
+      parts.push({
+        x: x, y: y,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5,
+        w: Math.random() * 8 + 5, h: Math.random() * 5 + 3,
+        r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.4,
+        c: cols[i % cols.length], life: 0, max: 90 + Math.random() * 60
       });
-
-    audioContext=
-      new (window.AudioContext ||
-           window.webkitAudioContext)();
-
-    analyser=audioContext.createAnalyser();
-
-    analyser.fftSize=512;
-
-    microphone=
-      audioContext.createMediaStreamSource(stream);
-
-    microphone.connect(analyser);
-
-    micRunning=true;
-
-    $('#micStatus').textContent=
-      'Mic on — now blow toward your microphone 💨';
-
-    detectBlow();
-
+    }
+    if (!raf) raf = requestAnimationFrame(tick);
   }
-  catch(err){
-
-    $('#micStatus').textContent=
-      'Please allow microphone access to use this feature.';
-
-  }
-}
-
-
-function detectBlow(){
-
-  if(!micRunning)return;
-
-  const data=
-    new Uint8Array(analyser.fftSize);
-
-  analyser.getByteTimeDomainData(data);
-
-  let sum=0;
-
-  for(let i=0;i<data.length;i++){
-
-    const value=(data[i]-128)/128;
-
-    sum+=value*value;
+  function tick() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    parts = parts.filter(function (p) { return p.life < p.max; });
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      p.vy += 0.25; p.vx *= 0.99;
+      p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life++;
+      ctx.globalAlpha = Math.max(0, Math.min(1, (p.max - p.life) / 30));
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+    if (parts.length) { raf = requestAnimationFrame(tick); }
+    else { raf = 0; ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); }
   }
 
-  const volume=Math.sqrt(sum/data.length);
+  /* ---------- Pages ---------- */
+  var ROUTES = ['home', 'cake', 'about', 'letter'];
+  var current = null;
+  var unlocked = false;
+  var main = document.getElementById('main');
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
 
-  if(volume>0.12){
+  function routeFromHash() {
+    var h = (window.location.hash || '').replace('#', '');
+    return ROUTES.indexOf(h) > -1 ? h : 'home';
+  }
+  function show(name, force) {
+    if (!force && name === current) return;
+    ROUTES.forEach(function (r) { document.getElementById('page-' + r).hidden = (r !== name); });
+    tabs.forEach(function (t) {
+      if (t.getAttribute('data-go') === name) t.setAttribute('aria-current', 'page');
+      else t.removeAttribute('aria-current');
+    });
+    if (name !== 'cake') stopMic();
+    current = name;
+    window.scrollTo(0, 0);
+    var h = document.getElementById('h-' + name);
+    if (h && h.focus) { try { h.focus({ preventScroll: true }); } catch (e) {} }
+  }
+  function go(name) {
+    try { if (window.location.hash !== '#' + name) window.location.hash = name; } catch (e) {}
+    show(name);
+  }
+  window.addEventListener('hashchange', function () { if (unlocked) show(routeFromHash()); });
+  main.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-go]') : null;
+    if (b) go(b.getAttribute('data-go'));
+  });
 
-    blow();
+  /* ---------- Lock keypad ---------- */
+  var lock = document.getElementById('lock');
+  var dotsBox = document.getElementById('dots');
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.dot'));
+  var err = document.getElementById('err');
+  var code = '';
+  var busy = false;
 
-    micRunning=false;
+  function render() {
+    dots.forEach(function (d, i) { d.classList.toggle('on', i < code.length); });
+    dotsBox.setAttribute('aria-label', code.length ? code.length + ' of 4 digits entered' : 'No digits entered yet');
+  }
+  function add(d) {
+    if (busy || code.length >= 4) return;
+    code += d;
+    err.textContent = '';
+    render();
+    if (code.length === 4) setTimeout(check, 180);
+  }
+  function back() {
+    if (busy) return;
+    code = code.slice(0, -1);
+    err.textContent = '';
+    render();
+  }
+  function unlock() {
+    busy = true;
+    dotsBox.classList.add('ok');
+    lock.classList.add('leaving');
+    setTimeout(function () {
+      lock.hidden = true;
+      main.hidden = false;
+      unlocked = true;
+      show(routeFromHash(), true);
+      var w = window.innerWidth, h = window.innerHeight;
+      burst(w * 0.25, h * 0.35, 80, 1);
+      burst(w * 0.75, h * 0.35, 80, 1);
+      setTimeout(function () { burst(w * 0.5, h * 0.25, 90, 1.1); }, 250);
+    }, reduce ? 0 : 450);
+  }
+  function check() {
+    if (code === PASSWORD) { unlock(); return; }
+    err.textContent = 'Wrong password. Please try again.';
+    dotsBox.classList.remove('shake');
+    void dotsBox.offsetWidth;
+    dotsBox.classList.add('shake');
+    busy = true;
+    setTimeout(function () { code = ''; busy = false; render(); }, 380);
+  }
+  document.getElementById('keypad').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('button[data-k]') : null;
+    if (!b) return;
+    var k = b.getAttribute('data-k');
+    if (k === 'back') back(); else add(k);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (lock.hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (/^[0-9]$/.test(e.key)) { add(e.key); }
+    else if (e.key === 'Backspace') { back(); }
+  });
+  render();
 
-    if(microphone){
-      microphone.disconnect();
+  /* ---------- Cake: blow out the candles ---------- */
+  var cake = document.getElementById('cakeArt');
+  var flames = Array.prototype.slice.call(cake.querySelectorAll('.flame'));
+  var smokes = Array.prototype.slice.call(cake.querySelectorAll('.smoke'));
+  var micBtn = document.getElementById('micBtn');
+  var holdBtn = document.getElementById('holdBtn');
+  var blowCtl = document.getElementById('blowCtl');
+  var meterFill = document.getElementById('meterFill');
+  var statusEl = document.getElementById('status');
+  var leadEl = document.getElementById('lead');
+  var progress = 0;
+  var finished = false;
+  var outCount = 0;
+
+  function setStatus(t) { statusEl.textContent = t; }
+
+  function setProgress(p) {
+    if (finished) return;
+    progress = Math.max(progress, Math.min(1, p));
+    meterFill.style.width = Math.round(progress * 100) + '%';
+    var shouldBeOut = Math.floor(progress * flames.length + 0.0001);
+    while (outCount < shouldBeOut && outCount < flames.length) {
+      flames[outCount].classList.add('out');
+      smokes[outCount].classList.add('out');
+      outCount++;
     }
-
-    if(audioContext){
-      audioContext.close();
-    }
-
-    return;
+    if (progress >= 1) finish();
+  }
+  function finish() {
+    if (finished) return;
+    finished = true;
+    for (var i = outCount; i < flames.length; i++) { flames[i].classList.add('out'); smokes[i].classList.add('out'); }
+    outCount = flames.length;
+    meterFill.style.width = '100%';
+    stopMic();
+    stopHold();
+    blowCtl.hidden = true;
+    leadEl.textContent = 'Beautifully done, Papa.';
+    setStatus('All the candles are out. May every wish come true. Ameen.');
+    var r = cake.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height * 0.3, 110, 1.1);
   }
 
-  requestAnimationFrame(detectBlow);
-}
+  /* Hold to blow (works everywhere) */
+  var holding = false;
+  var holdRaf = 0;
+  var lastT = 0;
+  function holdTick(t) {
+    if (!holding || finished) { holdRaf = 0; return; }
+    var dt = Math.min(0.05, (t - lastT) / 1000);
+    lastT = t;
+    setProgress(progress + dt / 1.3);
+    holdRaf = requestAnimationFrame(holdTick);
+  }
+  function startHold() {
+    if (finished || holding) return;
+    holding = true;
+    holdBtn.classList.add('holding');
+    setStatus('Keep blowing...');
+    lastT = performance.now();
+    holdRaf = requestAnimationFrame(holdTick);
+  }
+  function stopHold() {
+    if (!holding) return;
+    holding = false;
+    holdBtn.classList.remove('holding');
+    if (!finished) setStatus(progress > 0 ? 'Almost there. Keep going.' : 'The candles are lit.');
+  }
+  holdBtn.addEventListener('pointerdown', function (e) {
+    try { holdBtn.setPointerCapture(e.pointerId); } catch (x) {}
+    startHold();
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) { holdBtn.addEventListener(ev, stopHold); });
+  holdBtn.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  holdBtn.addEventListener('keydown', function (e) {
+    if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); startHold(); }
+  });
+  holdBtn.addEventListener('keyup', function (e) {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); stopHold(); }
+  });
 
-
-$('#micBlow').onclick=startMic;
-
-
-/* cut cake */
-(()=>{
-
-  const b=$('#cutbox');
-  const ln=$('#ln');
-
-  let sx,sy,on=false,done=false;
-
-  const pt=e=>{
-
-    const r=b.getBoundingClientRect();
-
-    return[
-      (e.clientX-r.left)/r.width*250,
-      (e.clientY-r.top)/r.height*160
-    ];
-  };
-
-
-  b.onpointerdown=e=>{
-
-    if(done)return;
-
-    on=true;
-
-    [sx,sy]=pt(e);
-
-    b.setPointerCapture(e.pointerId);
-
-    ln.setAttribute('x1',sx);
-    ln.setAttribute('y1',sy);
-  };
-
-
-  b.onpointermove=e=>{
-
-    if(!on)return;
-
-    const[x,y]=pt(e);
-
-    ln.setAttribute('x2',x);
-    ln.setAttribute('y2',y);
-
-    if(
-      Math.hypot(x-sx,y-sy)>70 &&
-      Math.abs(y-sy)>50
-    ){
-
-      on=false;
-      done=true;
-
-      b.classList.add('cut');
-
-      ln.setAttribute('x2',sx);
-      ln.setAttribute('y2',sy);
-
-      boom(90);
-
-      $('#cs').textContent=
-        'Yay! Enjoy the sweetness 🍓';
-
-      setTimeout(()=>{
-        $('#n5').style.display='inline-block';
-      },900);
-    }
-  };
-
-
-  b.onpointerup=()=>{
-
-    on=false;
-
-    if(!done){
-      ln.setAttribute('x2',sx);
-      ln.setAttribute('y2',sy);
-    }
-  };
-
+  /* Microphone blow detection (needs microphone permission) */
+  var mic = { stream: null, ac: null, raf: 0 };
+  function stopMic() {
+    if (mic.raf) { cancelAnimationFrame(mic.raf); mic.raf = 0; }
+    if (mic.stream) { mic.stream.getTracks().forEach(function (t) { t.stop(); }); mic.stream = null; }
+    if (mic.ac) { try { mic.ac.close(); } catch (e) {} mic.ac = null; }
+    micBtn.disabled = false;
+  }
+  function micUnavailable() {
+    stopMic();
+    setStatus('The microphone is not available on this page. Press and hold the button below to blow instead.');
+    try { holdBtn.focus(); } catch (e) {}
+  }
+  micBtn.addEventListener('click', function () {
+    if (finished || mic.stream) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { micUnavailable(); return; }
+    micBtn.disabled = true;
+    setStatus('Allow the microphone, then blow gently towards your phone.');
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } })
+      .then(function (stream) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) { stream.getTracks().forEach(function (t) { t.stop(); }); micUnavailable(); return; }
+        mic.stream = stream;
+        mic.ac = new AC();
+        var src = mic.ac.createMediaStreamSource(stream);
+        var an = mic.ac.createAnalyser();
+        an.fftSize = 1024;
+        src.connect(an);
+        var buf = new Uint8Array(an.fftSize);
+        var started = performance.now();
+        var last = started;
+        setStatus('Listening... blow towards your phone.');
+        function loop(now) {
+          if (!mic.stream || finished) return;
+          an.getByteTimeDomainData(buf);
+          var sum = 0;
+          for (var i = 0; i < buf.length; i++) { var v = (buf[i] - 128) / 128; sum += v * v; }
+          var rms = Math.sqrt(sum / buf.length);
+          var dt = Math.min(0.05, (now - last) / 1000);
+          last = now;
+          if (rms > 0.12) setProgress(progress + dt / 1.1);
+          if (now - started > 20000) {
+            stopMic();
+            setStatus('I could not hear a blow. Try again, or press and hold the button below.');
+            return;
+          }
+          mic.raf = requestAnimationFrame(loop);
+        }
+        mic.raf = requestAnimationFrame(loop);
+      })
+      .catch(function () { micUnavailable(); });
+  });
 })();
-
-
-/* videos */
-let vi=0;
-
-const vb=$('#vids');
-
-for(let i=0;i<4;i++){
-
-  vb.innerHTML+=
-    `<div class="vid"
-      style="${i?'display:none':''}"
-      data-i="${i}">
-      🎬 Loading video ${i+1}…
-    </div>`;
-}
-
-
-vb.innerHTML+=
-  `<div style="display:flex;justify-content:center;gap:12px">
-    <button class="btn" style="margin:6px;padding:8px 18px" onclick="sv(-1)">‹</button>
-    <button class="btn" style="margin:6px;padding:8px 18px" onclick="sv(1)">›</button>
-  </div>`;
-
-
-function sv(d){
-
-  const a=[...vb.querySelectorAll('.vid')];
-
-  a[vi].style.display='none';
-
-  a[vi].querySelector('video')?.pause();
-
-  vi=(vi+d+a.length)%a.length;
-
-  a[vi].style.display='grid';
-}
-
-
-/* pop balloons */
-const WORDS=[
-  "You",
-  "are",
-  "very",
-  "handsome bro!"
-];
-
-const PC=[
-  '#f7a8d8',
-  '#c084fc',
-  '#ff8fc7',
-  '#a78bfa'
-];
-
-let pn=0;
-
-
-WORDS.forEach((w,i)=>{
-
-  const d=document.createElement('div');
-
-  d.className='pb';
-
-  d.innerHTML=
-    `<svg viewBox="0 0 80 110">
-      <path d="M40 4C20 4 6 20 6 40c0 22 20 40 34 46 14-6 34-24 34-46C74 20 60 4 40 4z"
-        fill="${PC[i]}"
-        stroke="#8e44ad"
-        stroke-width="3"/>
-
-      <ellipse cx="26" cy="28" rx="7" ry="11"
-        fill="#fff"
-        opacity=".55"
-        transform="rotate(25 26 28)"/>
-
-      <path d="M40 86l-5 7h10z" fill="#8e44ad"/>
-
-      <path d="M40 93c-7 7 7 10 0 16"
-        fill="none"
-        stroke="#8e44ad"
-        stroke-width="2.5"/>
-    </svg>`;
-
-
-  d.onclick=()=>{
-
-    if(d.classList.contains('gone'))return;
-
-    d.classList.add('gone');
-
-    for(let k=0;k<12;k++){
-
-      const p=document.createElement('i');
-
-      p.className='sp';
-
-      const a=k/12*6.28;
-      const r=40+Math.random()*30;
-
-      p.style.cssText=
-        `left:48px;
-         top:48px;
-         background:${PC[i]};
-         --x:${Math.cos(a)*r}px;
-         --y:${Math.sin(a)*r}px`;
-
-      d.appendChild(p);
-    }
-
-
-    const b=document.createElement('b');
-
-    b.textContent=WORDS[pn++];
-
-    $('#said').innerHTML=
-      pn===1?'':$('#said').innerHTML;
-
-    $('#said').appendChild(b);
-
-    $('#ph').style.display='none';
-
-    boom(pn===4?100:10);
-
-    if(pn===4){
-
-      setTimeout(()=>{
-        $('#n8').style.display='inline-block';
-      },700);
-    }
-  };
-
-
-  $('#pops').appendChild(d);
-
-});
-
-
-/* seal */
-$('#seal').onclick=()=>{
-
-  boom(160);
-
-  $('#seal').textContent='Sealed with love 💜';
-
-};
-
-
-/* confetti */
-function boom(n){
-
-  for(let i=0;i<n;i++){
-
-    const c=document.createElement('i');
-
-    c.className='cf';
-
-    c.style.cssText=
-      `left:${Math.random()*100}vw;
-       background:${[
-         '#f06bb6',
-         '#a855c8',
-         '#ffc94d',
-         '#ff8fc7',
-         '#7c5cdb'
-       ][i%5]};
-       animation-delay:${Math.random()*.8}s;
-       animation-duration:${2+Math.random()*2}s;
-       border-radius:${i%2?'50%':'2px'}`;
-
-    document.body.appendChild(c);
-
-    setTimeout(()=>{
-      c.remove();
-    },4800);
-  }
-}
-
-
-/* video files */
-const VIDEOS=[
-  "video4.mp4",
-  "video2.mp4",
-  "video3.mp4",
-  "video1.mp4"
-];
-
-document.querySelectorAll('.vid').forEach((d,i)=>{
-
-  if(VIDEOS[i]){
-
-    d.innerHTML=
-      '<video src="'+VIDEOS[i]+'" controls playsinline preload="metadata"></video>';
-  }
-});
-
-
-/* =====================================================
-   SCRATCH PHOTO
-   ===================================================== */
-
-(()=>{
-
-  const wrap=$('#scratchWrap');
-  const canvas=$('#scratchCanvas');
-  const ctx=canvas.getContext('2d');
-
-  const text=$('#scratchText');
-  const next=$('#nPhoto');
-
-  let scratching=false;
-  let lastX=0;
-  let lastY=0;
-  let finished=false;
-  let strokes=0;
-
-
-  /* This runs ONLY when the photo page is visible */
-  window.initScratch=function(){
-
-    if(!wrap || !canvas)return;
-
-    const r=wrap.getBoundingClientRect();
-
-    /* If page is still hidden, try again */
-    if(r.width===0 || r.height===0){
-
-      setTimeout(window.initScratch,300);
-
-      return;
-    }
-
-
-    const w=r.width;
-    const h=r.height;
-
-
-    /* High resolution canvas */
-    canvas.width=Math.round(w*2);
-    canvas.height=Math.round(h*2);
-
-    canvas.style.width=w+'px';
-    canvas.style.height=h+'px';
-
-
-    /* Reset canvas */
-    ctx.setTransform(1,0,0,1,0,0);
-
-    ctx.clearRect(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-
-    /* Purple cover */
-    ctx.globalCompositeOperation='source-over';
-
-    ctx.fillStyle='#c9a8d8';
-
-    ctx.fillRect(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-
-    /* Cover text */
-    ctx.fillStyle='#ffffff';
-
-    ctx.font='700 21px Nunito, sans-serif';
-
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
-
-    ctx.fillText(
-      'SCRATCH HERE ✨',
-      canvas.width/2,
-      canvas.height/2
-    );
-
-
-    /* Switch to erase mode */
-    ctx.globalCompositeOperation='destination-out';
-
-    strokes=0;
-    finished=false;
-
-    text.textContent=
-      'Scratch to reveal the surprise ✨';
-
-    next.style.display='none';
-  };
-
-
-  function point(e){
-
-    const r=canvas.getBoundingClientRect();
-
-    return{
-      x:(e.clientX-r.left)*2,
-      y:(e.clientY-r.top)*2
-    };
-  }
-
-
-  canvas.addEventListener('pointerdown',e=>{
-
-    if(finished)return;
-
-    e.preventDefault();
-
-    scratching=true;
-
-    canvas.setPointerCapture(e.pointerId);
-
-    const p=point(e);
-
-    lastX=p.x;
-    lastY=p.y;
-
-  });
-
-
-  canvas.addEventListener('pointermove',e=>{
-
-    if(!scratching || finished)return;
-
-    e.preventDefault();
-
-    const p=point(e);
-
-    ctx.beginPath();
-
-    ctx.moveTo(lastX,lastY);
-
-    ctx.lineTo(p.x,p.y);
-
-    ctx.lineWidth=84;
-
-    ctx.lineCap='round';
-
-    ctx.lineJoin='round';
-
-    ctx.stroke();
-
-    lastX=p.x;
-    lastY=p.y;
-
-    strokes++;
-
-
-    /* After enough scratching, reveal everything */
-    if(strokes>=45){
-
-      finished=true;
-
-      ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
-      text.textContent=
-        'Surprise revealed! 💜';
-
-      setTimeout(()=>{
-
-        next.style.display='inline-block';
-
-      },500);
-    }
-
-  });
-
-
-  canvas.addEventListener('pointerup',e=>{
-
-    scratching=false;
-
-    try{
-      canvas.releasePointerCapture(e.pointerId);
-    }catch(err){}
-
-  });
-
-
-  canvas.addEventListener('pointercancel',()=>{
-
-    scratching=false;
-
-  });
-
-
-})();
-
-
-/* replay */
-function replay(){
-
-  location.reload();
-
-}

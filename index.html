@@ -1,133 +1,154 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>A Little Surprise for 오빠</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=Nunito:wght@400;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"></head><body>
-<div id="balloons"></div>
-<canvas id="fx"></canvas>
+<title>Papa Ka Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ======================= LOCK ======================= -->
+<div id="lock">
+  <div class="lock-card">
+    <svg class="gift" viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="10" y="26" width="44" height="28" rx="4"/>
+      <rect x="7" y="18" width="50" height="10" rx="3"/>
+      <path d="M32 18v36"/>
+      <path d="M32 18c-6-12-18-9-14-3 3 4 14 3 14 3zM32 18c6-12 18-9 14-3-3 4-14 3-14 3z"/>
+    </svg>
+    <h1>A little gift for Papa</h1>
+    <p class="sub">Enter the password</p>
+    <div class="dots" id="dots" role="img" aria-label="No digits entered yet">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <p class="err" id="err" role="alert" aria-live="polite"></p>
+    <div class="keypad" id="keypad">
+      <button class="key" type="button" data-k="1" aria-label="1">1</button>
+      <button class="key" type="button" data-k="2" aria-label="2">2</button>
+      <button class="key" type="button" data-k="3" aria-label="3">3</button>
+      <button class="key" type="button" data-k="4" aria-label="4">4</button>
+      <button class="key" type="button" data-k="5" aria-label="5">5</button>
+      <button class="key" type="button" data-k="6" aria-label="6">6</button>
+      <button class="key" type="button" data-k="7" aria-label="7">7</button>
+      <button class="key" type="button" data-k="8" aria-label="8">8</button>
+      <button class="key" type="button" data-k="9" aria-label="9">9</button>
+      <span class="key ghost" aria-hidden="true"></span>
+      <button class="key" type="button" data-k="0" aria-label="0">0</button>
+      <button class="key" type="button" data-k="back" aria-label="Delete"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg></button>
+    </div>
+    <p class="lock-note">You can also type on your keyboard</p>
+  </div>
+</div>
 
-<!-- 0 LOCK -->
-<section class="pg on" id="p0">
- <div id="lock" class="card" style="display:flex;flex-direction:column;align-items:center;padding:20px 18px 22px;width:min(100%,330px);background:rgba(255,255,255,.55)">
-  <div class="ic">🔒</div>
-  <h2>Just for 오빠</h2>
-  <p class="sub">Enter the secret code to open your surprise</p>
-  <input id="kb" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
-  <div class="pin" id="pin" onclick="document.getElementById('kb').focus()"><i></i><i></i><i></i><i></i></div>
-  <div class="pad" id="pad"></div>
-  <div id="msgL"></div>
- </div>
-</section>
+<!-- ======================= MAIN ======================= -->
+<main id="main" class="wrap" hidden>
+  <nav class="topnav" aria-label="Pages">
+    <button class="tab" type="button" data-go="home">Home</button>
+    <button class="tab" type="button" data-go="cake">Cake</button>
+    <button class="tab" type="button" data-go="about">About Papa</button>
+    <button class="tab" type="button" data-go="letter">Letter</button>
+  </nav>
 
-<!-- 1 LOADER -->
-<section class="pg" id="p1">
- <div style="font-size:60px">🎂</div>
- <h2 style="margin-top:8px">Something Special</h2>
- <p class="sub" style="margin:4px 0">is being prepared for you…</p>
- <div class="bar"><b id="lb"></b></div><small id="lp">0%</small>
-</section>
-
-<!-- 2 HELLO -->
-<section class="pg" id="p2">
- <p class="title">Today is all yours ✨</p>
- <h1 class="big" id="hb" style="margin:10px 0"></h1>
- <div class="card" style="margin-top:14px"><p class="sub" style="margin:0 auto">This little website was made with love, just for you. Come, let me show you what's inside.</p></div>
- <button class="btn" onclick="go(3)">Open your gift 🎁</button>
-</section>
-
-<!-- 3 LETTER -->
-<section class="pg" id="p3">
- <p class="title" id="lt">Tap the envelope 💌</p>
- <div class="env" id="env"><div class="fl"></div><div class="h">💜</div></div>
- <div class="card" id="letter"></div>
- <button class="btn" id="n3" style="display:none" onclick="go(4)">Keep going ✨</button>
-</section>
-
-<!-- 4 WISH -->
-<section class="pg" id="p4">
- <h2>Make a wish 🌟</h2>
- <p class="sub" id="ws">Close your eyes, wish for something special, then blow the candles.</p>
- <svg class="cake" id="ck" viewBox="0 0 250 220">
-  <ellipse cx="125" cy="205" rx="105" ry="12" fill="#e9c4f2" opacity=".6"/>
-  <rect x="35" y="130" width="180" height="70" rx="14" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/>
-  <path d="M35 150q15 22 30 0t30 0 30 0 30 0 30 0 30 0v-14a14 14 0 0 0-14-6H49a14 14 0 0 0-14 6z" fill="#fff" stroke="#a855c8" stroke-width="3"/>
-  <rect x="62" y="82" width="126" height="52" rx="12" fill="#fde0f0" stroke="#a855c8" stroke-width="3"/>
-  <path d="M62 100q13 18 21 0t21 0 21 0 21 0 21 0v-8a12 12 0 0 0-12-10H74a12 12 0 0 0-12 10z" fill="#fff" stroke="#a855c8" stroke-width="3"/>
-  <g stroke="#a855c8" stroke-width="3" stroke-linecap="round"><path d="M95 82V52M125 82V44M155 82V52"/></g>
-  <g class="fire"><path d="M95 48c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g>
-  <g class="fire" style="animation-delay:.1s"><path d="M125 40c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g>
-  <g class="fire" style="animation-delay:.2s"><path d="M155 48c-6-8 0-14 0-18 6 4 8 12 0 18z" fill="#ffc94d" stroke="#f08a24" stroke-width="2"/></g>
-  <g class="smoke" fill="none" stroke="#b9a3c9" stroke-width="3" stroke-linecap="round"><path d="M95 40q6-8 0-16M125 32q6-8 0-16M155 40q6-8 0-16"/></g>
- </svg>
- <button class="btn" id="blow">Blow the candles 🌬️</button>
- <button class="btn" id="micBlow">🎤 Blow with microphone</button>
-<p id="micStatus" class="sub" style="font-size:12px;margin-top:4px"></p>
- <button class="btn" id="n4" style="display:none" onclick="go(5)">Time for cake 🍰</button>
-</section>
-
-<!-- 5 CUT -->
-<section class="pg" id="p5">
- <h2>Time to cut the cake! 🍰</h2>
- <p class="sub" id="cs">Draw a line down through the cake to cut it.</p>
- <div id="cutbox">
-  <svg viewBox="0 0 250 160" style="width:100%;overflow:visible">
-   <g id="hl" class="half" style="transform-origin:125px 150px"><path d="M125 30H66a22 22 0 0 0-22 22v70a18 18 0 0 0 18 18h63z" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/><path d="M125 30H66a22 22 0 0 0-22 22v16q12 16 20 0t20 0 20 0 21 0z" fill="#fff" stroke="#a855c8" stroke-width="3"/></g>
-   <g id="hr" class="half" style="transform-origin:125px 150px"><path d="M125 30h59a22 22 0 0 1 22 22v70a18 18 0 0 1-18 18h-63z" fill="#f9c6e4" stroke="#a855c8" stroke-width="3"/><path d="M125 30h59a22 22 0 0 1 22 22v16q-12 16-20 0t-20 0-20 0-21 0z" fill="#fff" stroke="#a855c8" stroke-width="3"/><text x="150" y="108" font-size="30">🍓</text></g>
-  </svg>
-  <svg id="line" viewBox="0 0 250 160" preserveAspectRatio="none"><line id="ln" stroke="#a855c8" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/></svg>
- </div>
- <button class="btn" id="n5" style="display:none" onclick="go(6)">Next ✨</button>
-</section>
-
-<!-- VIDEOS -->
-<section class="pg" id="p7">
- <h2>Some edits only for you! 💝</h2>
- <p class="sub" style="font-size:13px;margin:2px 0 14px">just to make you smile 💓</p>
-<p class="sub" style="font-size:13px;margin:2px 0 14px">double tap for full screen</p>
-
- <div class="vslide" id="vids"></div>
- <button class="btn" onclick="go(7)">Next ✨</button>
-</section>
-
-<!-- 8 POP -->
-<section class="pg" id="p8">
- <h2>Pop the balloons! 🎈</h2>
- <p class="sub" id="ph" style="margin-bottom:4px">Tap each balloon to pop it</p>
- <div id="said">&nbsp;</div>
- <div id="pops"></div>
- <button class="btn" id="n8" style="display:none" onclick="go(8)">Next ✨</button>
-</section>
-<!-- PHOTO -->
-<section class="pg" id="p10">
-  <p class="title">And here's the star ⭐</p>
-
-  <div class="scratch-wrap" id="scratchWrap">
-    <img src="photo.jpg" alt="Birthday card" class="scratch-photo">
-    <canvas id="scratchCanvas"></canvas>
+  <!-- Page: Home -->
+  <div class="page" id="page-home">
+    <header class="hero">
+      <span class="eyebrow">Just for you</span>
+      <h1 id="h-home" tabindex="-1">Happy Birthday,<br><span class="papa">Papa</span></h1>
+      <p class="lede">Today is all about you. A few small things are waiting inside.</p>
+      <div class="rule" aria-hidden="true"><i></i></div>
+    </header>
+    <div class="pager">
+      <button class="btn" type="button" data-go="cake">Begin</button>
+    </div>
   </div>
 
-  <p class="sub" id="scratchText">Scratch to reveal the surprise ✨</p>
+  <!-- Page: Cake -->
+  <div class="page" id="page-cake" hidden>
+    <h2 id="h-cake" tabindex="-1">Make a wish, then blow out the candles</h2>
+    <div class="cake-grid">
+      <div class="cake-art" id="cakeArt">
+        <svg viewBox="0 0 320 250" role="img" aria-label="Birthday cake with five candles">
+          <ellipse class="plate" cx="160" cy="224" rx="146" ry="16"/>
+          <rect class="f-teal" x="40" y="150" width="240" height="72" rx="18"/>
+          <path class="icing" d="M40 168 q15 22 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 V152 q0 -2 -2 -2 H42 q-2 0 -2 2z"/>
+          <rect class="f-gold" x="78" y="96" width="164" height="56" rx="16"/>
+          <path class="icing" d="M78 114 q13.7 20 27.3 0 t27.3 0 t27.3 0 t27.3 0 t27.3 0 t27.3 0 V98 q0 -2 -2 -2 H80 q-2 0 -2 2z"/>
+          <circle class="f-rose" cx="160" cy="186" r="7"/>
+          <circle class="f-gold" cx="120" cy="190" r="4"/>
+          <circle class="f-gold" cx="200" cy="190" r="4"/>
+          <rect class="candle" x="105" y="64" width="10" height="36" rx="3"/>
+          <rect class="candle" x="130" y="64" width="10" height="36" rx="3"/>
+          <rect class="candle" x="155" y="64" width="10" height="36" rx="3"/>
+          <rect class="candle" x="180" y="64" width="10" height="36" rx="3"/>
+          <rect class="candle" x="205" y="64" width="10" height="36" rx="3"/>
+          <g transform="translate(110 64)"><path class="flame" data-i="0" d="M0 -26 C11 -10 9 6 0 6 C-9 6 -11 -10 0 -26Z"/></g>
+          <g transform="translate(135 64)"><path class="flame" data-i="1" style="animation-delay:-.15s" d="M0 -26 C11 -10 9 6 0 6 C-9 6 -11 -10 0 -26Z"/></g>
+          <g transform="translate(160 64)"><path class="flame" data-i="2" style="animation-delay:-.3s" d="M0 -26 C11 -10 9 6 0 6 C-9 6 -11 -10 0 -26Z"/></g>
+          <g transform="translate(185 64)"><path class="flame" data-i="3" style="animation-delay:-.1s" d="M0 -26 C11 -10 9 6 0 6 C-9 6 -11 -10 0 -26Z"/></g>
+          <g transform="translate(210 64)"><path class="flame" data-i="4" style="animation-delay:-.25s" d="M0 -26 C11 -10 9 6 0 6 C-9 6 -11 -10 0 -26Z"/></g>
+          <path class="smoke" data-i="0" d="M110 52 q-6 -8 0 -16"/>
+          <path class="smoke" data-i="1" d="M135 52 q6 -8 0 -16"/>
+          <path class="smoke" data-i="2" d="M160 52 q-6 -8 0 -16"/>
+          <path class="smoke" data-i="3" d="M185 52 q6 -8 0 -16"/>
+          <path class="smoke" data-i="4" d="M210 52 q-6 -8 0 -16"/>
+        </svg>
+      </div>
+      <div class="cake-text">
+        <p class="lead" id="lead">Close your eyes, make a wish, then blow towards your phone.</p>
+        <div class="blow-ctl" id="blowCtl">
+          <button class="btn" type="button" id="micBtn">Blow with microphone</button>
+          <button class="btn ghost hold" type="button" id="holdBtn">Hold to blow</button>
+          <div class="meter" aria-hidden="true"><span id="meterFill"></span></div>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite">The candles are lit.</p>
+      </div>
+    </div>
+    <div class="pager">
+      <button class="btn ghost" type="button" data-go="home">Back</button>
+      <button class="btn" type="button" data-go="about">Next</button>
+    </div>
+  </div>
 
-  <button class="btn" id="nPhoto" style="display:none" onclick="go(9)">
-    Next ✨
-  </button>
-</section>
+  <!-- Page: About -->
+  <div class="page" id="page-about" hidden>
+    <h2 id="h-about" tabindex="-1">Papa, this is who you are</h2>
+    <div class="reasons">
+      <article class="reason"><h3>A shelter of prayers</h3><p>Your prayers are like an umbrella. Rain or shine, we stay safe underneath.</p></article>
+      <article class="reason"><h3>Hidden love</h3><p>There was worry inside even your scolding, and we understand that now. Your love never needed words.</p></article>
+      <article class="reason"><h3>Quiet courage</h3><p>You set your own wishes aside and made ours your own.</p></article>
+    </div>
+    <div class="pager">
+      <button class="btn ghost" type="button" data-go="cake">Back</button>
+      <button class="btn" type="button" data-go="letter">Next</button>
+    </div>
+  </div>
 
-<!-- 9 FINAL -->
-<section class="pg" id="p9">
- <div class="heart">💜</div>
- <h2 style="margin-top:10px">Happy Birthday, 오빠!</h2>
- <div class="card" style="margin-top:14px;text-align:left;line-height:1.7">
-  <p>This wasn't about perfection, just honesty.</p><br>
-  <p>I wanted you to feel celebrated on your special day. Whatever comes next, I'm so glad you're my brother.</p>
-  <span style="display:block;text-align:right;font-family:'Caveat',cursive;font-size:26px;color:var(--vio);margin-top:8px">Made with love 💜</span>
- </div>
- <button class="btn" id="seal">Seal it 💌</button>
- <button class="btn" onclick="replay()" style="margin-top:10px">
-  🔄 Replay
-</button>
-</section>
+  <!-- Page: Letter -->
+  <div class="page" id="page-letter" hidden>
+    <h2 id="h-letter" tabindex="-1">A little letter</h2>
+    <article class="letter">
+      <p class="hi">Papa,</p>
+      <p>You never made a show of how much you did for us. The tiredness in the morning, the worry at night, you kept it all to yourself and saved our smiles.</p>
+      <p>Today we just want to say thank you. For everything you said out loud, and for everything you did in silence.</p>
+      <p>We love you very much, and a little more every year.</p>
+      <p class="sign">Your children</p>
+    </article>
+    <div class="closing">
+      <p class="dua">May Allah give you a long life, good health, peace and many happy days. Ameen.</p>
+      <p class="end">Happy Birthday, Papa</p>
+    </div>
+    <div class="pager">
+      <button class="btn ghost" type="button" data-go="about">Back</button>
+      <button class="btn" type="button" data-go="home">Back to start</button>
+    </div>
+  </div>
+</main>
 
-<div class="dots" id="dots" style="display:none"></div>
-<script src="script.js"></script></body></html>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script src="script.js"></script>
+</body>
+</html>
